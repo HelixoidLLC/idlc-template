@@ -1,0 +1,1 @@
+/Users/igor/Obsidian/ObsidianNotes/Consult/Blogging/Ontology structure for projects.md

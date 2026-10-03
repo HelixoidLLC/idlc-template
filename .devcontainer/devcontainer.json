@@ -1,0 +1,69 @@
+{
+  "name": "{PROJECT_NAME}",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
+  "forwardPorts": [1420],
+  "portsAttributes": {
+    "1420": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspaces,type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/worktrees/${localWorkspaceFolderBasename}",
+  "remoteUser": "ubuntu",
+  "mounts": [
+    "source=dev-claude-config,target=/home/ubuntu/.claude,type=volume",
+    "source=${localEnv:HOME}/.config/dev-container/devcontainer.env,target=/home/ubuntu/.devcontainer-shared.env,type=bind,consistency=cached",
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume"
+  ],
+  "remoteEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/ubuntu/.claude",
+    "WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
+    "DEVPOD_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
+    "AGENTS_DIR": "${containerWorkspaceFolder}/agents"
+  },
+  "initializeCommand": "mkdir -p ~/.claude ~/.config/dev-container && touch ~/.config/dev-container/devcontainer.env .devcontainer/.env",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y tmux htop && chmod +x ${containerWorkspaceFolder}/.devcontainer/scripts/*.sh 2>/dev/null || true && sudo chown -R ubuntu:ubuntu /home/ubuntu/.claude && mise trust 2>/dev/null || true && npx get-shit-done-cc --local 2>/dev/null || true && if [ -f ${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh ]; then ${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh; fi",
+  "postStartCommand": "echo '✅ Container started'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "tamasfe.even-better-toml",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-python.python",
+        "vsls-contrib.gistfs",
+        "github.copilot",
+        "github.copilot-chat",
+        "shd101wyy.markdown-preview-enhanced"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.cwd": "${containerWorkspaceFolder}",
+        "terminal.integrated.shellIntegration.enabled": true,
+        "workbench.startupEditor": "none"
+      }
+    }
+  }
+}

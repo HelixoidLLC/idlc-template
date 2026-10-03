@@ -1,0 +1,5 @@
+idlc-template.wiki/
+.mcp.json
+scripts/.claude-ollama.env
+tests/ui/runs/
+.playwright-cli/
